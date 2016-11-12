@@ -1,0 +1,9 @@
+{
+  "name": "Medium",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "jsonfile": "^2.4.0",
+    "livejournal": "^0.1.2"
+  }
+}

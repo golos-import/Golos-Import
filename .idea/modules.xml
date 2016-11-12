@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$//Import_to_Golos.iml" filepath="$PROJECT_DIR$//Import_to_Golos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LiveJournal/LiveJournal.iml" filepath="$PROJECT_DIR$/LiveJournal/LiveJournal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Medium/Medium.iml" filepath="$PROJECT_DIR$/Medium/Medium.iml" />
+    </modules>
+  </component>
+</project>
