@@ -1,3 +1,4 @@
+const fs = require('fs');
 const LiveJournal = require('livejournal');
 const jsonfile = require('jsonfile');
 const args = require('yargs').argv;
@@ -49,8 +50,8 @@ function getIdsString(from, to) {
 function getAllUserPosts(journalName) {
     getLatestId(journalName, console.err).then((maxId) => {
         if (maxId < 100) {
-            promises.push(getPosts(journalName, 1, maxId)
-                .then(parsePosts, console.err))
+            getPosts(journalName, 1, maxId)
+                .then(parsePosts, console.err)
                 .then(()=>writeToFile(journalName));
         } else {
             let i = 0;
@@ -89,7 +90,13 @@ function parsePosts(events) {
 
 function writeToFile(journalName) {
     console.log(`Скачано ${posts.length} постов`);
-    jsonfile.writeFile(`./../result/${journalName}.json`, {posts: posts}, (err) => {
+
+    let outputFolder = './../result/';
+    if (!fs.existsSync(outputFolder)){
+        fs.mkdirSync(outputFolder);
+    }
+
+    jsonfile.writeFile(outputFolder+`${journalName}.json`, {posts: posts}, (err) => {
         if (err != null)
             console.error(err)
     });
