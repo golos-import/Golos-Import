@@ -11,7 +11,11 @@ function getLatestId(journalName) {
             selecttype: 'lastn',
             howmany: 1
         }, function (err, value) {
-            resolve(parseInt(value.events[0].itemid));
+            if (err) {
+                reject(err);
+            } else {
+                resolve(parseInt(value.events[0].itemid));
+            }
         });
     });
 }
@@ -43,11 +47,11 @@ function getIdsString(from, to) {
 }
 
 function getAllUserPosts(journalName) {
-    getLatestId(journalName).then((maxId) => {
+    getLatestId(journalName, console.err).then((maxId) => {
         let i = 0;
         let intervalId = setInterval(()=> {
             if (i <= maxId / 100) {
-                getPosts(journalName, i * 100 + 1, Math.min(i * 100 + 99, maxId)).then(parsePosts, console.log);
+                getPosts(journalName, i * 100 + 1, Math.min(i * 100 + 99, maxId)).then(parsePosts, console.err);
                 i++;
             } else {
                 writeToFile(journalName);
