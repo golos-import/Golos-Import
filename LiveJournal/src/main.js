@@ -1,6 +1,6 @@
 const LiveJournal = require('livejournal');
 const jsonfile = require('jsonfile');
-
+const args = require('yargs').argv;
 var posts = [];
 
 function getLatestId(journalName) {
@@ -48,16 +48,29 @@ function getIdsString(from, to) {
 
 function getAllUserPosts(journalName) {
     getLatestId(journalName, console.err).then((maxId) => {
-        let i = 0;
-        let intervalId = setInterval(()=> {
-            if (i <= maxId / 100) {
-                getPosts(journalName, i * 100 + 1, Math.min(i * 100 + 99, maxId)).then(parsePosts, console.err);
-                i++;
-            } else {
-                writeToFile(journalName);
-                clearInterval(intervalId);
-            }
-        }, 1000);
+        if (maxId < 100) {
+            promises.push(getPosts(journalName, 1, maxId)
+                .then(parsePosts, console.err))
+                .then(()=>writeToFile(journalName));
+        } else {
+            let i = 0;
+            let intervalId = setInterval(()=> {
+                if (i <= maxId / 100) {
+                    let fromId = i * 100 + 1;
+                    let toId = Math.min(i * 100 + 99, maxId);
+                    getPosts(journalName, fromId, toId)
+                        .then(parsePosts, console.err)
+                        .then(() => {
+                            if (toId == maxId) {
+                                writeToFile(journalName);
+                            }
+                        });
+                    i++;
+                } else {
+                    clearInterval(intervalId);
+                }
+            }, 1000);
+        }
     });
 }
 
@@ -82,4 +95,4 @@ function writeToFile(journalName) {
     });
 }
 
-getAllUserPosts('tema');
+getAllUserPosts(args.journalName);
