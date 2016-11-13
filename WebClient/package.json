@@ -1,0 +1,16 @@
+{
+  "name": "WebClient",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "napa syncfusion/JavaScript-Widgets:syncfusion eligrey/FileSaver.js:filesaver"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.0",
+    "jquery.easing": "^1.3.2",
+    "jsrender": "^0.9.71",
+    "napa": "^2.3.0"
+  }
+}
