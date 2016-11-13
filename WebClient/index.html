@@ -16,19 +16,20 @@
 </head>
 <body>
 <div id="root">
-    <form id="ljImport" name="ljImport">
-        <label for="journalName">Имя блога в ЖЖ:&nbsp</label>
-        <input id="journalName" type="text" name="journalName" value="protivoyadie"/>
-        <input class="btn btn-success" type="submit" value="Скачать посты из ЖЖ"/>
-    </form>
-    <form id="postToGolos" name="postToGolos" hidden>
+    <label for="journalName">Имя блога в ЖЖ:&nbsp</label>
+    <input id="journalName" type="text" name="journalName" value="protivoyadie"/>
+    <button id="ljImportBtn" class="btn btn-success">Скачать посты из ЖЖ</button>
+
+    <div id="postToGolos" hidden>
         <div id="ljPostsGrid"></div>
-        <label for="golosNickName">Имя профиля в Голосе:&nbsp</label><input id="golosNickName" type="text" value="aly"/>
+        <label for="golosNickName">Имя профиля в Голосе:&nbsp</label>
+        <input id="golosNickName" type="text" value="aly"/>
         <br>
         <label for="golosPostingKey">Приватный ключ для постинга в Голос:&nbsp</label>
         <input value="" id="golosPostingKey" type="password"/>
-        <input class="btn btn-success" type="submit" value="Запостить в Голос">
-    </form>
+        <input id="postToGolosBtn" class="btn btn-success" type="submit" value="Запостить в Голос">
+    </div>
+
     <div id="popup"></div>
 </div>
 <script>
@@ -42,8 +43,8 @@
         ljPostsGrid.ejGrid({
             dataSource: posts,
             allowSorting: true,
-            allowPaging:true,
-            pageSettings: { pageSize: 5 },
+            allowPaging: true,
+            pageSettings: {pageSize: 5},
             allowResizing: true,
             columns: [
                 {field: "datetime", headerText: "Время постинга в ЖЖ"},
@@ -66,60 +67,60 @@
         });
     }
     $(()=> {
-        let ljImportForm = document.forms.namedItem("ljImport");
-        ljImportForm.addEventListener('submit', (ev) => {
+        var ljImportBtn = $("#ljImportBtn");
+        ljImportBtn.click(()=> {
             var popup = $("#popup");
-
-            let oData = new FormData(ljImportForm);
-            console.log(oData);
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", ljImportURL);
-
-            xhr.onload = (oEvent) => {
-                if (xhr.status == 200) {
-                    let res = JSON.parse(xhr.responseText);
+            $.ajax(ljImportURL, {
+                method: 'GET',
+                data: {
+                    journalName: $('#journalName').val()
+                },
+                success: (data, textStatus, jqXHR) => {
+                    let res = JSON.parse(data);
                     renderLJPostsGrid(res.posts);
-                } else {
-                    alert("Error " + xhr.status + " occurred");
+                    popup.data("ejWaitingPopup").hide();
+                },
+                error: () => {
+                    popup.data("ejWaitingPopup").hide();
                 }
-
-                popup.data("ejWaitingPopup").hide();
-            };
-            xhr.send(oData);
-
+            });
             popup.ejWaitingPopup({
                 showOnInit: true,
                 target: "#root"
             });
-            ev.preventDefault();
-        }, false);
+        });
 
-        let postToGolos = document.forms.namedItem("postToGolos");
-        postToGolos.addEventListener('submit', (ev) => {
+        var postToGolosBtn = $("#postToGolosBtn");
+        postToGolosBtn.click(()=> {
+            $("#postToGolos").show();
+            let gridObj = $("#ljPostsGrid").data("ejGrid");
+            // Gets the selected row list
+            let selected = gridObj.getSelectedRecords();
+            console.log(selected);
+            console.log(selected[0]);
+
             var popup = $("#popup");
-
-            let oData = new FormData(postToGolos);
-            console.log(oData);
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", golosPostURL);
-
-            xhr.onload = (oEvent) => {
-                if (xhr.status == 200) {
+            $.ajax(golosPostURL, {
+                method: 'GET',
+                data: {
+                    golosPostingKey: $('#golosPostingKey').val(),
+                    golosNickName: $('#golosNickName').val(),
+                    subject: selected.subject,
+                    post: selected.post
+                },
+                success: (data, textStatus, jqXHR) => {
                     alert('Done!');
-                } else {
-                    alert("Error " + xhr.status + " occurred");
+                    popup.data("ejWaitingPopup").hide();
+                },
+                error: () => {
+                    popup.data("ejWaitingPopup").hide();
                 }
-
-                popup.data("ejWaitingPopup").hide();
-            };
-            xhr.send(oData);
-
+            });
             popup.ejWaitingPopup({
                 showOnInit: true,
                 target: "#root"
             });
-            ev.preventDefault();
-        }, false);
+        });
     });
 </script>
 </body>
