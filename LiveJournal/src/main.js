@@ -49,16 +49,18 @@ function getIdsString(from, to) {
 
 function getAllUserPosts(journalName) {
     getLatestId(journalName, console.err).then((maxId) => {
-        if (maxId < 100) {
+        if (maxId <= 99) {
             getPosts(journalName, 1, maxId)
                 .then(parsePosts, console.err)
                 .then(()=>writeToFile(journalName));
         } else {
             let i = 0;
             let intervalId = setInterval(()=> {
-                if (i <= maxId / 100) {
-                    let fromId = i * 100 + 1;
-                    let toId = Math.min(i * 100 + 99, maxId);
+                if (i < maxId) {
+                    i+=1;
+                    let fromId = i;
+                    i+=98;
+                    let toId = Math.min(maxId, i);
                     getPosts(journalName, fromId, toId)
                         .then(parsePosts, console.err)
                         .then(() => {
@@ -66,7 +68,6 @@ function getAllUserPosts(journalName) {
                                 writeToFile(journalName);
                             }
                         });
-                    i++;
                 } else {
                     clearInterval(intervalId);
                 }
@@ -92,11 +93,11 @@ function writeToFile(journalName) {
     console.log(`Скачано ${posts.length} постов`);
 
     let outputFolder = './../result/';
-    if (!fs.existsSync(outputFolder)){
+    if (!fs.existsSync(outputFolder)) {
         fs.mkdirSync(outputFolder);
     }
 
-    jsonfile.writeFile(outputFolder+`${journalName}.json`, {posts: posts}, (err) => {
+    jsonfile.writeFile(outputFolder + `${journalName}.json`, {posts: posts}, (err) => {
         if (err != null)
             console.error(err)
     });
