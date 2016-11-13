@@ -16,23 +16,26 @@
 </head>
 <body>
 <div id="root">
-    <form name="ljImport">
-        <label for="journalName">Имя блога в ЖЖ:&nbsp</label><input id="journalName" type="text"/>
+    <form id="ljImport" name="ljImport">
+        <label for="journalName">Имя блога в ЖЖ:&nbsp</label>
+        <input id="journalName" type="text" name="journalName" value="protivoyadie"/>
         <input class="btn btn-success" type="submit" value="Скачать посты из ЖЖ"/>
     </form>
-    <form id="postToGolosForm" name="postToGolos" hidden>
+    <form id="postToGolos" name="postToGolos" hidden>
         <div id="ljPostsGrid"></div>
-        <label for="golosNickName">Имя профиля в Голосе:&nbsp</label><input id="golosNickName" type="password"/>
+        <label for="golosNickName">Имя профиля в Голосе:&nbsp</label><input id="golosNickName" type="text" value="aly"/>
         <br>
-        <label for="golosPostingKey">Приватный ключ для постинга в Голос:&nbsp</label><input id="golosPostingKey" type="password"/>
+        <label for="golosPostingKey">Приватный ключ для постинга в Голос:&nbsp</label>
+        <input value="" id="golosPostingKey" type="password"/>
         <input class="btn btn-success" type="submit" value="Запостить в Голос">
     </form>
     <div id="popup"></div>
 </div>
 <script>
-    var ljImportURL = "";
+    var ljImportURL = "http://127.0.0.1:3000/parseblog";
+    var golosPostURL = "http://127.0.0.1:3000/postToGolos";
     function renderLJPostsGrid(posts) {
-        $("#postToGolosForm").show();
+        $("#postToGolos").show();
 
         var ljPostsGrid = $("#ljPostsGrid");
         ljPostsGrid.data("ejGrid") != undefined && ljPostsGrid.ejGrid("destroy"); //Костыль для syncfusion #166030 bug
@@ -40,8 +43,7 @@
             dataSource: posts,
             allowSorting: true,
             allowPaging:true,
-            pageSettings: { pageSize: 10 },
-//            allowTextWrap: true,
+            pageSettings: { pageSize: 5 },
             allowResizing: true,
             columns: [
                 {field: "datetime", headerText: "Время постинга в ЖЖ"},
@@ -64,11 +66,12 @@
         });
     }
     $(()=> {
-        let form = document.forms.namedItem("ljImport");
-        form.addEventListener('submit', (ev) => {
+        let ljImportForm = document.forms.namedItem("ljImport");
+        ljImportForm.addEventListener('submit', (ev) => {
             var popup = $("#popup");
 
-            let oData = new FormData(form);
+            let oData = new FormData(ljImportForm);
+            console.log(oData);
             let xhr = new XMLHttpRequest();
             xhr.open("GET", ljImportURL);
 
@@ -76,6 +79,33 @@
                 if (xhr.status == 200) {
                     let res = JSON.parse(xhr.responseText);
                     renderLJPostsGrid(res.posts);
+                } else {
+                    alert("Error " + xhr.status + " occurred");
+                }
+
+                popup.data("ejWaitingPopup").hide();
+            };
+            xhr.send(oData);
+
+            popup.ejWaitingPopup({
+                showOnInit: true,
+                target: "#root"
+            });
+            ev.preventDefault();
+        }, false);
+
+        let postToGolos = document.forms.namedItem("postToGolos");
+        postToGolos.addEventListener('submit', (ev) => {
+            var popup = $("#popup");
+
+            let oData = new FormData(postToGolos);
+            console.log(oData);
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", golosPostURL);
+
+            xhr.onload = (oEvent) => {
+                if (xhr.status == 200) {
+                    alert('Done!');
                 } else {
                     alert("Error " + xhr.status + " occurred");
                 }
