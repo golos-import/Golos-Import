@@ -14,12 +14,13 @@ app.get('/parseblog', function (req, res) {
   // тут надо сделать вызов функции заполняющей посты
   var fakeData = getFakeData();
 
-  var response = '<p>Выберите посты для импорта:</p>';
+  var response = '<p>Choose posts for importing:</p>';
 
   for (var i = 0; i < 3; i++) {
       response += '<p><input type="checkbox" checked>' + fakeData[i].subject + '</p>';
   };
 
+  response += '<p>Save to Golos.IO blockchain <input type="submit" value="Submit"></p>';
   res.send(response)
 })
 
