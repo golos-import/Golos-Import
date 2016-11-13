@@ -1,4 +1,4 @@
-var exec = require('child_process').execFile;
+var exec = require('child_process').exec;
 var lj = require('./lj');
 var express = require('express');
 var app = express();
@@ -20,12 +20,17 @@ app.get('/postToGolos', function (req, res) {
     let subject = req.query['subject'];
     let post = req.query['post'];
 
-    exec(`python C:\\JSProject\\Import_to_Golos\\GolosPosting\\src\\main.py ${golosPostingKey} ${golosNickName} ${subject} ${post}`, function(err, data) {
+    let command = `python C:\\JSProject\\Import_to_Golos\\GolosPosting\\src\\main.py ${golosNickName} ${golosPostingKey} ${subject} ${post}`;
+    exec(command, function(error, stdout, stderr) {
+        if (error) {
+            console.error(command);
+            console.error(error);
+        }
         res.send("OK");
     });
 
 });
 
 app.listen(3000, function () {
-    console.log('Example app listening on port 3000!')
+    console.log('Example app listening on port 3000!');
 });

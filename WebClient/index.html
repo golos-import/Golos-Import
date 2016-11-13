@@ -96,8 +96,6 @@
             let gridObj = $("#ljPostsGrid").data("ejGrid");
             // Gets the selected row list
             let selected = gridObj.getSelectedRecords();
-            console.log(selected);
-            console.log(selected[0]);
 
             var popup = $("#popup");
             $.ajax(golosPostURL, {
@@ -105,8 +103,8 @@
                 data: {
                     golosPostingKey: $('#golosPostingKey').val(),
                     golosNickName: $('#golosNickName').val(),
-                    subject: selected.subject,
-                    post: selected.post
+                    subject: selected[0].subject,
+                    post: selected[0].post
                 },
                 success: (data, textStatus, jqXHR) => {
                     alert('Done!');
