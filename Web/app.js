@@ -14,14 +14,13 @@ app.get('/parseblog', function (req, res) {
   // тут надо сделать вызов функции заполняющей посты
   var fakeData = getFakeData();
 
-
   var response = '';
 
-  for (var i = 0; i < 2; i++) {
-      res += '<p>' + fakeData[i].subject + '</p>';
+  for (var i = 0; i < 3; i++) {
+      response += '<p>' + fakeData[i].subject + '</p>';
   };
 
-  res.send(posts)
+  res.send(response)
 })
 
 app.listen(3000, function () {
