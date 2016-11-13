@@ -1,3 +1,4 @@
+var exec = require('child_process').execFile;
 var lj = require('./lj');
 var express = require('express');
 var app = express();
@@ -14,12 +15,15 @@ app.get('/parseblog', function (req, res) {
     });
 });
 app.get('/postToGolos', function (req, res) {
+    let golosPostingKey = req.query['golosPostingKey'];
+    let golosNickName = req.query['golosNickName'];
     let subject = req.query['subject'];
     let post = req.query['post'];
-    let golosNickName = req.query['golosNickName'];
-    let golosPostingKey = req.query['golosPostingKey'];
 
-    res.send("OK");
+    exec(`python C:\\JSProject\\Import_to_Golos\\GolosPosting\\src\\main.py ${golosPostingKey} ${golosNickName} ${subject} ${post}`, function(err, data) {
+        res.send("OK");
+    });
+
 });
 
 app.listen(3000, function () {
