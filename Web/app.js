@@ -10,17 +10,46 @@ app.get('/', function (req, res) {
 
 app.get('/parseblog', function (req, res) {
   var blogname = req.query['blogname'];
+  var journalName = blogname;
 
-  // тут надо сделать вызов функции заполняющей посты
-  var fakeData = getFakeData();
+  var response = '<p>Choose posts for importing:</p>';
 
-  var response = '<p>Выберите посты для импорта:</p>';
+  var maxId;
+  LiveJournal.xmlrpc.getevents({
+            journal: journalName,
+            auth_method: 'noauth',
+            selecttype: 'lastn',
+            howmany: 1
+        }, function (err, value) {
+                maxId = parseInt(value.events[0].itemid);
 
-  for (var i = 0; i < 3; i++) {
-      response += '<p><input type="checkbox" checked>' + fakeData[i].subject + '</p>';
-  };
+                LiveJournal.xmlrpc.getevents({
+                journal: journalName,
+                auth_method: 'noauth',
+                selecttype: 'multiple',
+                itemids: getIdsString(1, maxId)
+                  }, function (err, value) {
+                        value.events.forEach(event => {
+                          posts.push({
+                              id: event.itemid,
+                              datetime: event.eventtime,
+                              url: event.url,
+                              subject: event.subject,
+                              post: event.event,
+                              tags: event.props.taglist
+                          });
+                      });
 
-  res.send(response)
+                      //
+                        for (var i = 0; i < 10; i++) {
+                            response += '<p><input type="checkbox" checked>' + posts[i].subject + '</p>';
+                        };
+
+                        response += '<p>Save to Golos.IO blockchain <input type="submit" value="Submit"></p>';
+                        res.send(response)
+
+                  });
+        });
 })
 
 app.listen(3000, function () {
@@ -44,3 +73,17 @@ function getFakeData() {
 
     return data; 
 }
+
+function getAllPosts(journalName){
+ 
+}
+
+
+function getIdsString(from, to) {
+    var res = '';
+    for (var i = from; i < to; i++) {
+        res += i + ','
+    }
+    return res + to;
+}
+
