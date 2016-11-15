@@ -1,15 +1,17 @@
-from piston.steem import Steem
+import time
 import sys
+
+from piston.utils import sanitizePermlink
+from transliterate import translit
+from piston.steem import Steem
 
 args = sys.argv
 
 steem = Steem(wif=args[2])
 
-steem.post(args[3], args[4], args[1], category="from-lj")
+title = args[3]
+permlink = sanitizePermlink(translit(title, 'ru', reversed=True) + '-' + str(int(time.time())))
 
-"""data structure:
-        args[0] - название скрипта,
-        args[1] - ник в голосе,
-        args[2] - приватный ключ,
-        args[3] - заголовок поста,
-        args[4] - тело поста. """
+# TODO добавлять в пост url, дату публикации и тэги исходного поста в ЖЖ
+
+steem.post(title=title, permlink=permlink, body=args[4], author=args[1], tags=["from-lj"])

@@ -1,0 +1,2 @@
+steem-piston==0.3.4
+transliterate==1.8.1
