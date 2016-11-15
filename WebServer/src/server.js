@@ -1,5 +1,5 @@
 var PythonShell = require('python-shell');
-var lj = require('./lj');
+var lj = require('./../../LiveJournal/src/lj');
 var express = require('express');
 var app = express();
 app.use("/node_modules", express.static( __dirname + '/../../WebClient/node_modules'));
