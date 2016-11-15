@@ -1,10 +1,11 @@
 {
-  "name": "Medium",
+  "name": "LJ",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
     "express": "^4.14.0",
     "jsonfile": "^2.4.0",
-    "livejournal": "^0.1.2"
+    "livejournal": "^0.1.2",
+    "python-shell": "^0.4.0"
   }
 }

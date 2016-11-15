@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "napa syncfusion/JavaScript-Widgets:syncfusion eligrey/FileSaver.js:filesaver"
+    "install": "napa syncfusion/JavaScript-Widgets:syncfusion"
   },
   "dependencies": {
     "bootstrap": "^3.3.6",

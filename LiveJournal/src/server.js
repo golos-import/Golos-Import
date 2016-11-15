@@ -1,15 +1,14 @@
-var exec = require('child_process').exec;
+var PythonShell = require('python-shell');
 var lj = require('./lj');
 var express = require('express');
 var app = express();
-app.use("/node_modules", express.static("C:\\JSProjects\\Import_to_Golos\\WebClient\\node_modules"));
+app.use("/node_modules", express.static( __dirname + '/../../WebClient/node_modules'));
 
 app.get('/', function (req, res) {
-    res.sendFile('C:\\JSProjects\\Import_to_Golos\\WebClient\\index.html');
+    res.sendFile('index.html', {root: __dirname + '/../../WebClient'});
 });
 app.get('/parseblog', function (req, res) {
     let journalName = req.query['journalName'];
-    journalName = journalName?journalName:'protivoyadie';
     lj.getAllUserPosts(journalName).then((posts)=> {
         res.send(JSON.stringify(posts));
     });
@@ -20,17 +19,23 @@ app.get('/postToGolos', function (req, res) {
     let subject = req.query['subject'];
     let post = req.query['post'];
 
-    let command = `python C:\\JSProject\\Import_to_Golos\\GolosPosting\\src\\main.py ${golosNickName} ${golosPostingKey} ${subject} ${post}`;
-    exec(command, function(error, stdout, stderr) {
-        if (error) {
-            console.error(command);
-            console.error(error);
-        }
-        res.send("OK");
-    });
+    let options = {
+        mode: 'text',
+        scriptPath: __dirname + '/../../GolosPosting/src',
+        args: [golosNickName, golosPostingKey, subject, post]
+    };
 
+    PythonShell.run('main.py', options, function (err, results) {
+        if (err){
+            console.error(options);
+            console.error(err);
+            res.status(500).send('Something broke!');
+        } else {
+            res.send("OK");
+        }
+    });
 });
 
 app.listen(3000, function () {
-    console.log('Example app listening on port 3000!');
+    console.log('Server started on port 3000!');
 });
