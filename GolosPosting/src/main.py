@@ -1,13 +1,14 @@
 import time
 import sys
 
+from piston.steem import Steem
 from piston.utils import sanitizePermlink
 from transliterate import translit
-from piston.steem import Steem
 
 args = sys.argv
 
-steem = Steem(wif=args[2])
+steem = Steem(wif=args[2]) #постинг в ноду прописанную в библиотеке по умолчанию
+# steem = Steem(node="wss://ws.golos.io", wif=args[2]) #можно в явном виде прописать ноду для постинга в Голос
 
 title = args[3]
 permlink = sanitizePermlink(translit(title, 'ru', reversed=True) + '-' + str(int(time.time())))
