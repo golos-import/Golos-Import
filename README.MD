@@ -27,6 +27,10 @@
 ##Ручная установка (для постинга в Голос):
 
 ```
+   git clone https://github.com/GolosChain/python-graphenelib
+   cd python-graphenelib
+   python setup.py install --user
+   cd..
    git clone https://github.com/GolosChain/python-goloslib
    cd python-goloslib
    python setup.py install --user
